@@ -31,6 +31,11 @@ type KeyValue struct {
 	Value string
 }
 
+// Less function for sort
+func Less(i, j KeyValue) bool {
+	return i.Key <= j.Key
+}
+
 // reduceName constructs the name of the intermediate file which map task
 // <mapTask> produces for reduce task <reduceTask>.
 func reduceName(jobName string, mapTask int, reduceTask int) string {
