@@ -4,7 +4,14 @@ import (
 	"fmt"
 	"mapreduce"
 	"os"
+	"strconv"
+	"strings"
+	"unicode"
 )
+
+func split(c rune) bool {
+	return !unicode.IsLetter(c)
+}
 
 //
 // The map function is called once for each file of input. The first
@@ -15,6 +22,12 @@ import (
 //
 func mapF(filename string, contents string) []mapreduce.KeyValue {
 	// Your code here (Part II).
+	result := make([]mapreduce.KeyValue, 0)
+	slices := strings.FieldsFunc(contents, split)
+	for _, slice := range slices {
+		result = append(result, mapreduce.KeyValue{slice, "1"})
+	}
+	return result
 }
 
 //
@@ -24,6 +37,16 @@ func mapF(filename string, contents string) []mapreduce.KeyValue {
 //
 func reduceF(key string, values []string) string {
 	// Your code here (Part II).
+	res := 0
+	for _, num := range values {
+		cur, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println("convert fail")
+		} else {
+			res += cur
+		}
+	}
+	return strconv.Itoa(res)
 }
 
 // Can be run in 3 ways:
@@ -44,4 +67,9 @@ func main() {
 	} else {
 		mapreduce.RunWorker(os.Args[2], os.Args[3], mapF, reduceF, 100, nil)
 	}
+	// r := mapF("test", "test asdfa adfaf.sadfasf")
+	// for _, pair := range r {
+	// 	fmt.Printf("key: %s, value: %s\n", pair.Key, pair.Value)
+	// }
+	// fmt.Println(reduceF("test", []string{"1", "2", "3"}))
 }
